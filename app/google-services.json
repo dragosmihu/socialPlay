@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "196327864671",
+    "project_id": "socialplay-e1c97",
+    "storage_bucket": "socialplay-e1c97.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:196327864671:android:61a68df674e67de0601eea",
+        "android_client_info": {
+          "package_name": "com.example.socialplay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "196327864671-ba7ln2j3cio1oorfrcnsaprvghbntsim.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.socialplay",
+            "certificate_hash": "669cf05d82e08eb61720628e9f6ff99993af6876"
+          }
+        },
+        {
+          "client_id": "196327864671-sf4kv24v3e08ftmj5qreeuktus88ejln.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGLgtTnV24DHfCeE-vGvpgUd73K87SwJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "196327864671-sf4kv24v3e08ftmj5qreeuktus88ejln.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
