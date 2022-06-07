@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -23,10 +26,11 @@ public class GoogleSignInActivity extends Activity {
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
-
+    private Button button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sign_in);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -34,6 +38,8 @@ public class GoogleSignInActivity extends Activity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
+        button = findViewById(R.id.sing_in_button);
+        button.setOnClickListener(view -> signIn());
     }
 
     @Override
@@ -63,8 +69,16 @@ public class GoogleSignInActivity extends Activity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        Intent intent;
                         Log.d(TAG, "signInWithCredential:success");
                         FirebaseUser user = mAuth.getCurrentUser();
+                        if(task.getResult().getAdditionalUserInfo().isNewUser()){
+                            intent = new Intent(GoogleSignInActivity.this, CreateProfileActivity.class);
+                        }
+                        else{
+                            intent = new Intent(GoogleSignInActivity.this, MainActivity.class);
+                        }
+                        startActivity(intent);
                         updateUI(user);
                     } else {
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
