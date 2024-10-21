@@ -37,6 +37,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SelectTenantActivity"
+            android:exported="false" />
         <service android:name=".Services.NotificationService" android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

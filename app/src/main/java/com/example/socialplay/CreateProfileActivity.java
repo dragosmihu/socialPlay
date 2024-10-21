@@ -59,6 +59,8 @@ public class CreateProfileActivity extends AppCompatActivity {
     private StorageReference UserProfilePictureRef;
     private String ProfilePictureUrl;
     String currentUserId;
+    private String selectedTenantId;
+    private String selectedFirebaseDatabaseUrl;
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
             result -> {
 
@@ -99,6 +101,34 @@ public class CreateProfileActivity extends AppCompatActivity {
                 mGetContent.launch("image/*");
             }
         });
+
+        // Fetch the selected tenant ID from the intent
+        selectedTenantId = getIntent().getStringExtra("selectedTenantId");
+
+        // Fetch the selected tenant's Firebase database URL from Firestore
+        fetchTenantFirebaseDatabaseUrl(selectedTenantId);
+    }
+
+    private void fetchTenantFirebaseDatabaseUrl(String tenantId) {
+        _db.collection("tenants").document(tenantId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    selectedFirebaseDatabaseUrl = document.getString("firebaseDatabaseUrl");
+                    initializeFirebase(selectedFirebaseDatabaseUrl);
+                } else {
+                    Log.d(TAG, "No such document");
+                }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
+            }
+        });
+    }
+
+    private void initializeFirebase(String firebaseDatabaseUrl) {
+        // Initialize Firebase with the selected tenant's Firebase database URL
+        // This is a placeholder for the actual Firebase initialization code
+        // You will need to update this with the appropriate Firebase initialization logic
     }
 
     @Override

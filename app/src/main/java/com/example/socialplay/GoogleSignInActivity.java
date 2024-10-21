@@ -18,6 +18,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class GoogleSignInActivity extends Activity {
 
@@ -27,10 +29,23 @@ public class GoogleSignInActivity extends Activity {
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private Button button;
+    private FirebaseFirestore db;
+    private String selectedTenantId;
+    private String selectedFirebaseDatabaseUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        db = FirebaseFirestore.getInstance();
+
+        // Fetch the selected tenant ID from the intent
+        selectedTenantId = getIntent().getStringExtra("selectedTenantId");
+
+        // Fetch the selected tenant's Firebase database URL from Firestore
+        fetchTenantFirebaseDatabaseUrl(selectedTenantId);
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -40,6 +55,28 @@ public class GoogleSignInActivity extends Activity {
         mAuth = FirebaseAuth.getInstance();
         button = findViewById(R.id.sing_in_button);
         button.setOnClickListener(view -> signIn());
+    }
+
+    private void fetchTenantFirebaseDatabaseUrl(String tenantId) {
+        db.collection("tenants").document(tenantId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    selectedFirebaseDatabaseUrl = document.getString("firebaseDatabaseUrl");
+                    initializeFirebase(selectedFirebaseDatabaseUrl);
+                } else {
+                    Log.d(TAG, "No such document");
+                }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
+            }
+        });
+    }
+
+    private void initializeFirebase(String firebaseDatabaseUrl) {
+        // Initialize Firebase with the selected tenant's Firebase database URL
+        // This is a placeholder for the actual Firebase initialization code
+        // You will need to update this with the appropriate Firebase initialization logic
     }
 
     @Override
