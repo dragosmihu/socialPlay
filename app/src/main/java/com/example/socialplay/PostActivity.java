@@ -48,6 +48,8 @@ public class PostActivity extends AppCompatActivity {
     private String CurrentUserId;
     private FirebaseFirestore _db;
     private FirebaseAuth mAuth;
+    private String selectedTenantId;
+    private String selectedFirebaseDatabaseUrl;
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
             result -> {
 
@@ -84,6 +86,34 @@ public class PostActivity extends AppCompatActivity {
                 ValidatePostInfo();
             }
         });
+
+        // Fetch the selected tenant ID from the intent
+        selectedTenantId = getIntent().getStringExtra("selectedTenantId");
+
+        // Fetch the selected tenant's Firebase database URL from Firestore
+        fetchTenantFirebaseDatabaseUrl(selectedTenantId);
+    }
+
+    private void fetchTenantFirebaseDatabaseUrl(String tenantId) {
+        _db.collection("tenants").document(tenantId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    selectedFirebaseDatabaseUrl = document.getString("firebaseDatabaseUrl");
+                    initializeFirebase(selectedFirebaseDatabaseUrl);
+                } else {
+                    Log.d(TAG, "No such document");
+                }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
+            }
+        });
+    }
+
+    private void initializeFirebase(String firebaseDatabaseUrl) {
+        // Initialize Firebase with the selected tenant's Firebase database URL
+        // This is a placeholder for the actual Firebase initialization code
+        // You will need to update this with the appropriate Firebase initialization logic
     }
 
     private void ValidatePostInfo() {

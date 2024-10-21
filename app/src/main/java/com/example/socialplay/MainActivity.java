@@ -63,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
     private List<Post> posts;
     private PostAdapter adapter;
     String currentUserId;
+    private RecyclerView tenantRecyclerView;
+    private TenantAdapter tenantAdapter;
+    private List<Tenant> tenantList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +136,35 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         DisplayAllUsersPosts();
+        setupTenantRecyclerView();
+        fetchTenants();
+    }
+
+    private void setupTenantRecyclerView() {
+        tenantRecyclerView = findViewById(R.id.tenant_recycler_view);
+        tenantRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        tenantList = new ArrayList<>();
+        tenantAdapter = new TenantAdapter(tenantList);
+        tenantRecyclerView.setAdapter(tenantAdapter);
+    }
+
+    private void fetchTenants() {
+        _db.collection("tenants").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w("MainActivity", "Listen failed.", error);
+                    return;
+                }
+
+                tenantList.clear();
+                for (DocumentSnapshot doc : value) {
+                    Tenant tenant = doc.toObject(Tenant.class);
+                    tenantList.add(tenant);
+                }
+                tenantAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void DisplayAllUsersPosts() {
